@@ -1,5 +1,5 @@
-import { AppSidebar } from "@/components/AppSidebar";
-import { SidebarProvider } from "@/components/ui/sidebar";
+import { AppSidebar } from "@/shared/presentation/components/AppSidebar";
+import { SidebarProvider } from "@/shared/presentation/components/ui/sidebar";
 import "./globals.css";
 
 export default function RootLayout({

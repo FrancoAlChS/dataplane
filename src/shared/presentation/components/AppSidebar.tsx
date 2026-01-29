@@ -1,3 +1,5 @@
+import { getTables } from "@/service/tables.service";
+import { ScrollArea } from "@/shared/presentation/components/ui/scroll-area";
 import {
   Sidebar,
   SidebarContent,
@@ -8,10 +10,8 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
   SidebarRail,
-} from "@/components/ui/sidebar";
-import { getTables } from "@/service/tables.service";
+} from "@/shared/presentation/components/ui/sidebar";
 import { Database, Table } from "lucide-react";
-import { ScrollArea } from "./ui/scroll-area";
 
 export async function AppSidebar() {
   const tables = await getTables();

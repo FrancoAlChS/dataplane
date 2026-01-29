@@ -1,5 +1,11 @@
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { ScrollArea } from "@/components/ui/scroll-area";
+import { getTableColumns, getTableData } from "@/service/tables.service";
+import {
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+} from "@/shared/presentation/components/ui/card";
+import { ScrollArea } from "@/shared/presentation/components/ui/scroll-area";
 import {
   Table,
   TableBody,
@@ -7,9 +13,13 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from "@/components/ui/table";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { getTableColumns, getTableData } from "@/service/tables.service";
+} from "@/shared/presentation/components/ui/table";
+import {
+  Tabs,
+  TabsContent,
+  TabsList,
+  TabsTrigger,
+} from "@/shared/presentation/components/ui/tabs";
 
 export default async function TablePage({
   params,

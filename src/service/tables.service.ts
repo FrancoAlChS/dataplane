@@ -1,4 +1,4 @@
-import { query } from "@/lib/db";
+import { query } from "@/shared/presentation/lib/db";
 
 export async function getTables() {
   try {
@@ -15,6 +15,7 @@ export async function getTables() {
     return [];
   }
 }
+
 export async function getTableColumns(tableName: string) {
   try {
     const result = await query(
