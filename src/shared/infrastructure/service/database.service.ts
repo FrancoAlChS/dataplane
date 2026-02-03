@@ -56,13 +56,24 @@ class DatabaseServiceImpl extends DatabaseService {
     tableName: string,
     page: number = 1,
     limit: number = 30,
+    sortColumn?: string,
+    sortOrder?: "asc" | "desc",
   ): Promise<unknown[]> {
     try {
       const offset = (page - 1) * limit;
+      let sortClause = "";
+      if (sortColumn && sortOrder) {
+        const cleanColumn = sortColumn.replace(/[^a-zA-Z0-9_]/g, "");
+        if (cleanColumn) {
+          sortClause = `ORDER BY "${cleanColumn}" ${sortOrder === "desc" ? "DESC" : "ASC"}`;
+        }
+      }
+
       const result = await query(
         `
         SELECT * 
         FROM "${tableName}"
+        ${sortClause}
         LIMIT $1 OFFSET $2;
       `,
         [limit, offset],

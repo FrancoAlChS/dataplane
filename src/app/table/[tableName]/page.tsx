@@ -1,4 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
+import { SortableHeader } from "@/shared/presentation/components/table/sortable-header";
 import {
   Card,
   CardContent,
@@ -24,15 +25,16 @@ import {
   getTableColumns,
   getTableData,
 } from "@/shared/presentation/server-actions/database.sa";
+import { PageParams } from "@/shared/presentation/type/type";
 
-export default async function TablePage({
-  params,
-}: {
-  params: Promise<{ tableName: string }>;
-}) {
+export default async function TablePage({ params, searchParams }: PageParams) {
   const { tableName } = await params;
+  const resolvedSearchParams = await searchParams;
+  const sortColumn = resolvedSearchParams.sort as string | undefined;
+  const sortOrder = resolvedSearchParams.order as "asc" | "desc" | undefined;
+
   const columns = await getTableColumns(tableName);
-  const data = await getTableData(tableName);
+  const data = await getTableData(tableName, 1, 30, sortColumn, sortOrder);
 
   return (
     <div className="flex-1 p-6 space-y-6 overflow-hidden flex flex-col">
@@ -99,7 +101,14 @@ export default async function TablePage({
                     <TableHeader>
                       <TableRow>
                         {columns.map((col) => (
-                          <TableHead key={col.name}>{col.name}</TableHead>
+                          <SortableHeader
+                            key={col.name}
+                            column={col.name}
+                            currentSort={sortColumn}
+                            currentOrder={sortOrder}
+                          >
+                            {col.name}
+                          </SortableHeader>
                         ))}
                       </TableRow>
                     </TableHeader>

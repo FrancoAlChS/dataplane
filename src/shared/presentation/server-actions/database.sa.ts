@@ -12,6 +12,14 @@ export async function getTableData(
   tableName: string,
   page: number = 1,
   limit: number = 30,
+  sortColumn?: string,
+  sortOrder?: "asc" | "desc",
 ) {
-  return databaseService.getTableData(tableName, page, limit);
+  return databaseService.getTableData(
+    tableName,
+    page,
+    limit,
+    sortColumn,
+    sortOrder,
+  );
 }
