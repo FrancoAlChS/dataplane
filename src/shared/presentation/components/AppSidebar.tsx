@@ -1,4 +1,3 @@
-import { getTables } from "@/service/tables.service";
 import { ScrollArea } from "@/shared/presentation/components/ui/scroll-area";
 import {
   Sidebar,
@@ -12,6 +11,7 @@ import {
   SidebarRail,
 } from "@/shared/presentation/components/ui/sidebar";
 import { Database, Table } from "lucide-react";
+import { getTables } from "../server-actions/database.sa";
 
 export async function AppSidebar() {
   const tables = await getTables();
@@ -30,14 +30,16 @@ export async function AppSidebar() {
               <SidebarMenu className="h-full">
                 {tables.length > 0 ? (
                   tables.map((table) => (
-                    <SidebarMenuItem key={table}>
+                    <SidebarMenuItem key={table.name}>
                       <SidebarMenuButton asChild>
                         <a
-                          href={`/table/${table}`}
+                          href={`/table/${table.name}`}
                           className="flex items-center gap-3 px-4 py-2 hover:bg-accent rounded-md group transition-colors"
                         >
                           <Table className="h-4 w-4 text-muted-foreground group-hover:text-primary transition-colors" />
-                          <span className="text-sm font-medium">{table}</span>
+                          <span className="text-sm font-medium">
+                            {table.name}
+                          </span>
                         </a>
                       </SidebarMenuButton>
                     </SidebarMenuItem>

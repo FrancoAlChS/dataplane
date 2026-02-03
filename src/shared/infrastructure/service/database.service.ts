@@ -2,8 +2,9 @@ import { Table } from "@/shared/domain/entity/table";
 import { TableColumn } from "@/shared/domain/entity/table_column";
 import { DatabaseService } from "@/shared/domain/service/database.service";
 import { query } from "@/shared/presentation/lib/db";
+import { TableColumnPG, TablePG } from "../types/type";
 
-export class DatabaseServiceImpl extends DatabaseService {
+class DatabaseServiceImpl extends DatabaseService {
   constructor() {
     super();
   }
@@ -17,23 +18,62 @@ export class DatabaseServiceImpl extends DatabaseService {
             ORDER BY table_name;
           `);
 
-      return result.rows.map(
-        (row: { table_name: string; table_type: string }) => ({
-          name: row.table_name,
-          type: row.table_type,
-        }),
-      );
+      return result.rows.map((row: TablePG) => ({
+        name: row.table_name,
+        type: row.table_type,
+      }));
     } catch (error) {
       console.error("Error fetching tables:", error);
       return [];
     }
   }
 
-  getTableColumns(tableName: string): Promise<TableColumn[]> {
-    throw new Error("Method not implemented.");
+  async getTableColumns(tableName: string): Promise<TableColumn[]> {
+    try {
+      const result = await query(
+        `
+        SELECT column_name, data_type, is_nullable, column_default
+        FROM information_schema.columns 
+        WHERE table_schema = 'public' AND table_name = $1
+        ORDER BY ordinal_position;
+      `,
+        [tableName],
+      );
+
+      return result.rows.map((data: TableColumnPG) => ({
+        defaultValue: data.column_default,
+        name: data.column_name,
+        nullable: data.is_nullable,
+        type: data.data_type,
+      }));
+    } catch (error) {
+      console.error(`Error fetching columns for table ${tableName}:`, error);
+      return [];
+    }
   }
 
-  getTableData(tableName: string): Promise<unknown[]> {
-    throw new Error("Method not implemented.");
+  async getTableData(
+    tableName: string,
+    page: number = 1,
+    limit: number = 30,
+  ): Promise<unknown[]> {
+    try {
+      const offset = (page - 1) * limit;
+      const result = await query(
+        `
+        SELECT * 
+        FROM "${tableName}"
+        LIMIT $1 OFFSET $2;
+      `,
+        [limit, offset],
+      );
+
+      return result.rows;
+    } catch (error) {
+      console.error(`Error fetching data for table ${tableName}:`, error);
+      return [];
+    }
   }
 }
+
+export const databaseService = new DatabaseServiceImpl();

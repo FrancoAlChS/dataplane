@@ -1,4 +1,4 @@
-import { getTableColumns, getTableData } from "@/service/tables.service";
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import {
   Card,
   CardContent,
@@ -20,6 +20,10 @@ import {
   TabsList,
   TabsTrigger,
 } from "@/shared/presentation/components/ui/tabs";
+import {
+  getTableColumns,
+  getTableData,
+} from "@/shared/presentation/server-actions/database.sa";
 
 export default async function TablePage({
   params,
@@ -39,12 +43,12 @@ export default async function TablePage({
       </div>
 
       <Tabs
-        defaultValue="properties"
+        defaultValue="data"
         className="flex-1 flex flex-col overflow-hidden"
       >
         <TabsList className="w-fit">
-          <TabsTrigger value="properties">Propiedades</TabsTrigger>
           <TabsTrigger value="data">Datos</TabsTrigger>
+          <TabsTrigger value="properties">Propiedades</TabsTrigger>
         </TabsList>
 
         <TabsContent value="properties" className="flex-1 overflow-hidden mt-4">
@@ -64,15 +68,15 @@ export default async function TablePage({
                     </TableRow>
                   </TableHeader>
                   <TableBody>
-                    {columns.map((col: any) => (
-                      <TableRow key={col.column_name}>
+                    {columns.map((col) => (
+                      <TableRow key={col.name}>
                         <TableCell className="font-medium">
-                          {col.column_name}
+                          {col.name}
                         </TableCell>
-                        <TableCell>{col.data_type}</TableCell>
-                        <TableCell>{col.is_nullable}</TableCell>
+                        <TableCell>{col.type}</TableCell>
+                        <TableCell>{col.nullable ? "true" : "false"}</TableCell>
                         <TableCell className="text-muted-foreground italic">
-                          {col.column_default || "NULL"}
+                          {col.defaultValue || "NULL"}
                         </TableCell>
                       </TableRow>
                     ))}
@@ -94,19 +98,17 @@ export default async function TablePage({
                   <Table>
                     <TableHeader>
                       <TableRow>
-                        {columns.map((col: any) => (
-                          <TableHead key={col.column_name}>
-                            {col.column_name}
-                          </TableHead>
+                        {columns.map((col) => (
+                          <TableHead key={col.name}>{col.name}</TableHead>
                         ))}
                       </TableRow>
                     </TableHeader>
                     <TableBody>
                       {data.map((row: any, idx: number) => (
                         <TableRow key={idx}>
-                          {columns.map((col: any) => (
-                            <TableCell key={`${idx}-${col.column_name}`}>
-                              {row[col.column_name]?.toString() || "NULL"}
+                          {columns.map((col) => (
+                            <TableCell key={`${idx}-${col.name}`}>
+                              {row[col.name]?.toString() || "NULL"}
                             </TableCell>
                           ))}
                         </TableRow>
