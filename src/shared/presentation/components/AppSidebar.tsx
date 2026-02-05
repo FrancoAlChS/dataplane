@@ -1,57 +1,80 @@
-import { ScrollArea } from "@/shared/presentation/components/ui/scroll-area";
 import {
   Sidebar,
   SidebarContent,
   SidebarGroup,
-  SidebarGroupContent,
   SidebarHeader,
   SidebarMenu,
+  SidebarMenuAction,
   SidebarMenuButton,
   SidebarMenuItem,
+  SidebarMenuSub,
+  SidebarMenuSubButton,
+  SidebarMenuSubItem,
   SidebarRail,
 } from "@/shared/presentation/components/ui/sidebar";
-import { Database, Table } from "lucide-react";
+import { ChevronRight, Database, TableProperties } from "lucide-react";
 import { getTables } from "../server-actions/database.sa";
+import {
+  Collapsible,
+  CollapsibleContent,
+  CollapsibleTrigger,
+} from "./ui/collapsible";
 
 export async function AppSidebar() {
   const tables = await getTables();
 
   return (
-    <Sidebar collapsible="none" className="h-full">
+    <Sidebar variant="inset">
       <SidebarHeader>
-        <div className="flex shrink-0 size-8 items-center justify-center rounded-lg bg-primary text-primary-foreground shadow-lg">
-          <Database className="size-4" />
-        </div>
+        <SidebarMenu>
+          <SidebarMenuItem>
+            <SidebarMenuButton size="lg" asChild>
+              <a href="#">
+                <div className="bg-sidebar-primary text-sidebar-primary-foreground flex aspect-square size-8 items-center justify-center rounded-lg">
+                  <Database className="size-4" />
+                </div>
+                <div className="grid flex-1 text-left text-sm leading-tight">
+                  <span className="truncate font-medium">DataPlane</span>
+                </div>
+              </a>
+            </SidebarMenuButton>
+          </SidebarMenuItem>
+        </SidebarMenu>
       </SidebarHeader>
+
       <SidebarContent className="h-full">
         <SidebarGroup className="h-full">
-          <SidebarGroupContent className="h-full">
-            <ScrollArea className="max-h-[calc(100vh-70px)]">
-              <SidebarMenu className="h-full">
-                {tables.length > 0 ? (
-                  tables.map((table) => (
-                    <SidebarMenuItem key={table.name}>
-                      <SidebarMenuButton asChild>
-                        <a
-                          href={`/table/${table.name}`}
-                          className="flex items-center gap-3 px-4 py-2 hover:bg-accent rounded-md group transition-colors"
-                        >
-                          <Table className="h-4 w-4 text-muted-foreground group-hover:text-primary transition-colors" />
-                          <span className="text-sm font-medium">
-                            {table.name}
-                          </span>
-                        </a>
-                      </SidebarMenuButton>
-                    </SidebarMenuItem>
-                  ))
-                ) : (
-                  <div className="px-4 py-3 text-sm text-muted-foreground italic bg-muted/30 rounded-md mx-2">
-                    No tables found or error connecting.
-                  </div>
-                )}
-              </SidebarMenu>
-            </ScrollArea>
-          </SidebarGroupContent>
+          <SidebarMenu className="h-full">
+            <Collapsible asChild defaultOpen>
+              <SidebarMenuItem>
+                <SidebarMenuButton>
+                  <TableProperties />
+                  <span>Tablas</span>
+                </SidebarMenuButton>
+
+                <CollapsibleTrigger asChild>
+                  <SidebarMenuAction className="data-[state=open]:rotate-90">
+                    <ChevronRight />
+                    <span className="sr-only">Toggle</span>
+                  </SidebarMenuAction>
+                </CollapsibleTrigger>
+
+                <CollapsibleContent>
+                  <SidebarMenuSub>
+                    {tables.map((table) => (
+                      <SidebarMenuSubItem key={table.name}>
+                        <SidebarMenuSubButton asChild>
+                          <a href={`/table/${table.name}`}>
+                            <span>{table.name}</span>
+                          </a>
+                        </SidebarMenuSubButton>
+                      </SidebarMenuSubItem>
+                    ))}
+                  </SidebarMenuSub>
+                </CollapsibleContent>
+              </SidebarMenuItem>
+            </Collapsible>
+          </SidebarMenu>
         </SidebarGroup>
       </SidebarContent>
       <SidebarRail />
